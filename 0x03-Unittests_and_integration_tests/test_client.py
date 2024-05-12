@@ -29,6 +29,19 @@ class TestGithubOrgClient(unittest.TestCase):
             client = GithubOrgClient("example")
             self.assertEqual(client._public_repos_url, "http://repos.url")
 
+    def test_public_repos(self):
+        """Test public_repos."""
+        with patch('client.GithubOrgClient.repos_payload',
+                   new_callable=unittest.mock.PropertyMock) as mock_payload:
+            mock_payload.return_value = [
+                {"name": "a", "license": {"key": "a-key"}},
+                {"name": "b", "license": {"key": "b-key"}},
+            ]
+            client = GithubOrgClient("example")
+            self.assertEqual(client.public_repos("a-key"), ["a"])
+            self.assertEqual(client.public_repos("b-key"), ["b"])
+            self.assertEqual(client.public_repos(), ["a", "b"])
+
 
 if __name__ == '__main__':
     unittest.main()
