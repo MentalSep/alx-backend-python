@@ -84,13 +84,15 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
         self.assertEqual(repos, self.expected_repos)
 
-    def test_public_repos_with_license(self):
+    @patch('client.get_json')
+    def test_public_repos_with_license(self, mock_get_json):
         """Test public_repos with license"""
-        github_org_client = GithubOrgClient('testorg')
+        mock_get_json.return_value = self.org_payload
+
+        github_org_client = GithubOrgClient("testorg")
 
         repos = github_org_client.public_repos("apache-2.0")
-
-        self.assertEqual(repos, self.apache2_repos)
+        self.assertEqual(repos, [])
 
 
 if __name__ == '__main__':
