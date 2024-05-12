@@ -1,4 +1,4 @@
-#!/ur/bin/env python3
+#!/usr/bin/env python3
 """Tests for utils.py="""
 
 import unittest
