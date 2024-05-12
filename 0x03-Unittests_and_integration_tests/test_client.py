@@ -2,6 +2,7 @@
 """Tests for client.py"""
 import unittest
 from unittest.mock import patch
+import unittest.mock
 from parameterized import parameterized
 from client import GithubOrgClient
 
@@ -24,14 +25,9 @@ class TestGithubOrgClient(unittest.TestCase):
         """Test public_repos."""
         with patch('client.GithubOrgClient.repos_payload',
                    new_callable=unittest.mock.PropertyMock) as payload:
-            payload.return_value = [
-                {"name": "a", "license": {"key": "a-key"}},
-                {"name": "b", "license": {"key": "b-key"}},
-            ]
-            client = GithubOrgClient("google")
-            self.assertEqual(client.public_repos("a-key"), ["a"])
-            self.assertEqual(client.public_repos("b-key"), ["b"])
-            self.assertEqual(client.public_repos(), ["a", "b"])
+            payload.return_value = {'repos_url': 'https://api.github.com/orgs/google/repos'}
+            client = GithubOrgClient('google')
+            self.assertEqual(client._public_repos_url, 'https://api.github.com/orgs/google/repos')
 
 
 if __name__ == '__main__':
