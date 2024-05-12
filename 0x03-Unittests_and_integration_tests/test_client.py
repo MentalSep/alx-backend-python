@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for client.py"""
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from parameterized import parameterized
 from client import GithubOrgClient
 
@@ -19,6 +19,19 @@ class TestGithubOrgClient(unittest.TestCase):
         client.org()
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org_name}")
+
+    def test_public_repos(self):
+        """Test public_repos."""
+        with patch('client.GithubOrgClient.repos_payload',
+                   new_callable=unittest.mock.PropertyMock) as payload:
+            payload.return_value = [
+                {"name": "a", "license": {"key": "a-key"}},
+                {"name": "b", "license": {"key": "b-key"}},
+            ]
+            client = GithubOrgClient("google")
+            self.assertEqual(client.public_repos("a-key"), ["a"])
+            self.assertEqual(client.public_repos("b-key"), ["b"])
+            self.assertEqual(client.public_repos(), ["a", "b"])
 
 
 if __name__ == '__main__':
